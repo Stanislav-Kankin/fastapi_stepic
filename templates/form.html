@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Форма ввода данных</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
+    <h1>Введите данные</h1>
+    <form action="/calculate" method="post">
+        <label for="organization_name">Название организации:</label>
+        <input type="text" id="organization_name" name="organization_name" required><br><br>
+
+        <label for="employee_count">Число сотрудников:</label>
+        <input type="number" id="employee_count" name="employee_count" required><br><br>
+
+        <label for="hr_specialist_count">Число кадровых специалистов:</label>
+        <input type="number" id="hr_specialist_count" name="hr_specialist_count" required><br><br>
+
+        <label for="documents_per_employee">Документов в год на сотрудника:</label>
+        <input type="number" id="documents_per_employee" name="documents_per_employee" required><br><br>
+
+        <label for="pages_per_document">Страниц в документе:</label>
+        <input type="number" step="0.01" id="pages_per_document" name="pages_per_document" required><br><br>
+
+        <label for="turnover_percentage">Текучка в процентах:</label>
+        <input type="number" step="0.01" id="turnover_percentage" name="turnover_percentage" required><br><br>
+
+        <label for="average_salary">Средняя зарплата:</label>
+        <input type="number" step="0.01" id="average_salary" name="average_salary" required><br><br>
+
+        <label for="courier_delivery_cost">Стоимость курьерской доставки:</label>
+        <input type="number" step="0.01" id="courier_delivery_cost" name="courier_delivery_cost" required><br><br>
+
+        <label for="hr_delivery_percentage">Процент отправки кадровых документов:</label>
+        <input type="number" step="0.01" id="hr_delivery_percentage" name="hr_delivery_percentage" required><br><br>
+
+        <input type="submit" value="Рассчитать">
+    </form>
+</body>
+</html>
