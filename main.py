@@ -57,41 +57,50 @@ async def calculate(
     logger.info("Received calculation request")
     logger.debug(f"Data: {locals()}")
 
-    paper_costs = session.query(PaperCosts).first()
-    license_costs = session.query(LicenseCosts).first()
-    typical_operations = session.query(TypicalOperations).first()
+    try:
+        paper_costs = session.query(PaperCosts).first()
+        license_costs = session.query(LicenseCosts).first()
+        typical_operations = session.query(TypicalOperations).first()
 
-    data = {
-        "organization_name": organization_name,
-        "employee_count": employee_count,
-        "hr_specialist_count": hr_specialist_count,
-        "documents_per_employee": documents_per_employee,
-        "pages_per_document": pages_per_document,
-        "turnover_percentage": turnover_percentage,
-        "average_salary": average_salary,
-        "courier_delivery_cost": courier_delivery_cost,
-        "hr_delivery_percentage": hr_delivery_percentage
-    }
+        if not paper_costs or not license_costs or not typical_operations:
+            logger.error("Missing data in the database")
+            return templates.TemplateResponse("error.html", {"request": request, "message": "Missing data in the database"})
 
-    results = calculate_costs(data, paper_costs, license_costs, typical_operations)
+        data = {
+            "organization_name": organization_name,
+            "employee_count": employee_count,
+            "hr_specialist_count": hr_specialist_count,
+            "documents_per_employee": documents_per_employee,
+            "pages_per_document": pages_per_document,
+            "turnover_percentage": turnover_percentage,
+            "average_salary": average_salary,
+            "courier_delivery_cost": courier_delivery_cost,
+            "hr_delivery_percentage": hr_delivery_percentage
+        }
 
-    user_data = UserData(
-        organization_name=data["organization_name"],
-        employee_count=data["employee_count"],
-        hr_specialist_count=data["hr_specialist_count"],
-        documents_per_employee=data["documents_per_employee"],
-        pages_per_document=data["pages_per_document"],
-        turnover_percentage=data["turnover_percentage"],
-        average_salary=data["average_salary"],
-        courier_delivery_cost=data["courier_delivery_cost"],
-        hr_delivery_percentage=data["hr_delivery_percentage"],
-        total_paper_costs=results['total_paper_costs'],
-        total_logistics_costs=results['total_logistics_costs'],
-        total_operations_costs=results['total_operations_costs'],
-        total_license_costs=results['total_license_costs']
-    )
-    session.add(user_data)
-    session.commit()
+        results = calculate_costs(data, paper_costs, license_costs, typical_operations)
 
-    logger.info("Calculation completed successfully")
-    return templates.TemplateResponse("result.html", {"request": request, "results": results})
+        user_data = UserData(
+            organization_name=data["organization_name"],
+            employee_count=data["employee_count"],
+            hr_specialist_count=data["hr_specialist_count"],
+            documents_per_employee=data["documents_per_employee"],
+            pages_per_document=data["pages_per_document"],
+            turnover_percentage=data["turnover_percentage"],
+            average_salary=data["average_salary"],
+            courier_delivery_cost=data["courier_delivery_cost"],
+            hr_delivery_percentage=data["hr_delivery_percentage"],
+            total_paper_costs=results['total_paper_costs'],
+            total_logistics_costs=results['total_logistics_costs'],
+            total_operations_costs=results['total_operations_costs'],
+            total_license_costs=results['total_license_costs']
+        )
+        session.add(user_data)
+        session.commit()
+
+        logger.info("Calculation completed successfully")
+        return templates.TemplateResponse("result.html", {"request": request, "results": results})
+
+    except Exception as e:
+        logger.error(f"Error during calculation: {e}")
+        return templates.TemplateResponse("error.html", {"request": request, "message": str(e)})
