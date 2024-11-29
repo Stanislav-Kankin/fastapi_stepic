@@ -1,16 +1,36 @@
-/* static/style.css */
+/* Общие стили для всех страниц */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
+    background: url('/static/images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+}
+
+.centered-container {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 50px auto;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
 }
 
 h1 {
     color: #333;
+    text-align: center;
 }
 
 form {
     max-width: 600px;
     margin: auto;
+    background: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 label {
@@ -18,7 +38,7 @@ label {
     margin-bottom: 10px;
 }
 
-input[type="text"], input[type="number"] {
+input[type="text"], input[type="number"], input[type="email"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
@@ -37,16 +57,6 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
     background-color: #45a049;
-}
-
-.centered-container {
-    text-align: center;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-    max-width: 600px;
 }
 
 .button {
@@ -68,4 +78,42 @@ input[type="submit"]:hover {
 .button-container {
     text-align: center;
     margin-top: 20px;
+}
+
+.info-box {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
+    margin: 20px auto;
+    max-width: 300px;
+    text-align: center;
+}
+
+.info-box a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.info-box a:hover {
+    text-decoration: underline;
+}
+
+.info-boxes {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+/* Стили для ссылок в информационных блоках */
+.info-link {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.info-link:hover {
+    text-decoration: underline;
 }
