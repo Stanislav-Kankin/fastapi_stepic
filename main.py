@@ -1,11 +1,13 @@
+# main.py
 import logging
 from logging.handlers import RotatingFileHandler
 from fastapi import FastAPI, Request, Form, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from database import init_db, get_db_session
-from models import UserData, PaperCosts, LicenseCosts, TypicalOperations
+from models import UserData, PaperCosts, LicenseCosts, TypicalOperations  # Добавьте эти импорты
 from calculator import calculate_costs
+from telegram_bot import send_telegram_message  # Импортируем функцию
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -39,6 +41,10 @@ async def read_root(request: Request):
 @app.get("/form")
 async def read_form(request: Request):
     return templates.TemplateResponse("form.html", {"request": request})
+
+@app.get("/feedback")
+async def read_feedback(request: Request):
+    return templates.TemplateResponse("feedback.html", {"request": request})
 
 @app.post("/calculate")
 async def calculate(
@@ -103,4 +109,52 @@ async def calculate(
 
     except Exception as e:
         logger.error(f"Error during calculation: {e}")
+        return templates.TemplateResponse("error.html", {"request": request, "message": str(e)})
+
+@app.post("/submit_feedback")
+async def submit_feedback(
+    request: Request,
+    inn: str = Form(...),
+    name: str = Form(...),
+    phone: str = Form(...),
+    email: str = Form(...),
+    preferred_contact: str = Form(...),
+    session = Depends(get_db_session)
+):
+    logger.info("Received feedback submission")
+    logger.debug(f"Data: {locals()}")
+
+    try:
+        # Получение последних результатов расчета
+        last_user_data = session.query(UserData).order_by(UserData.id.desc()).first()
+
+        if not last_user_data:
+            logger.error("No calculation results found")
+            return templates.TemplateResponse("error.html", {"request": request, "message": "No calculation results found"})
+
+        # Формирование сообщения для Telegram
+        message = (
+            f"Новая обратная связь:\n\n"
+            f"ИНН: {inn}\n"
+            f"Имя: {name}\n"
+            f"Телефон: {phone}\n"
+            f"Email: {email}\n"
+            f"Предпочтительный способ связи: {preferred_contact}\n\n"
+            f"Результаты расчета:\n"
+            f"Распечатывание, хранение документов: {last_user_data.total_paper_costs} руб.\n"
+            f"Расходы на доставку документов: {last_user_data.total_logistics_costs} руб.\n"
+            f"Расходы на оплату времени по работе с документами: {last_user_data.total_operations_costs} руб.\n"
+            f"Итого расходы при КДП на бумаге: {last_user_data.total_paper_costs + last_user_data.total_logistics_costs + last_user_data.total_operations_costs} руб.\n"
+            f"Сумма КЭДО от HRlink: {last_user_data.total_license_costs} руб.\n"
+            f"Сумма выгоды: {last_user_data.total_paper_costs + last_user_data.total_logistics_costs + last_user_data.total_operations_costs - last_user_data.total_license_costs} руб."
+        )
+
+        # Отправка сообщения через Telegram
+        send_telegram_message(message)
+
+        logger.info("Feedback submitted successfully")
+        return templates.TemplateResponse("feedback_success.html", {"request": request})
+
+    except Exception as e:
+        logger.error(f"Error during feedback submission: {e}")
         return templates.TemplateResponse("error.html", {"request": request, "message": str(e)})
