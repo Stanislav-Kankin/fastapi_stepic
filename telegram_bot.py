@@ -1,4 +1,3 @@
-# telegram_bot.py
 import requests
 import logging
 
@@ -7,7 +6,12 @@ TELEGRAM_CHAT_ID = -1002371910425
 
 logger = logging.getLogger(__name__)
 
-def send_telegram_message(message):
+
+def format_number(value):
+    return "{:,.2f}".format(value).replace(",", " ").replace(".00", "")
+
+
+def send_telegram_message(message, user_data):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
         'chat_id': TELEGRAM_CHAT_ID,

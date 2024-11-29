@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from database import init_db, get_db_session
 from models import UserData, PaperCosts, LicenseCosts, TypicalOperations  # Добавьте эти импорты
 from calculator import calculate_costs
-from telegram_bot import send_telegram_message  # Импортируем функцию
+from telegram_bot import send_telegram_message, format_number  # Импортируем функции
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -140,17 +140,27 @@ async def submit_feedback(
             f"Телефон: {phone}\n"
             f"Email: {email}\n"
             f"Предпочтительный способ связи: {preferred_contact}\n\n"
+            f"Ранее введенные данные:\n"
+            f"Название организации: {last_user_data.organization_name}\n"
+            f"Число сотрудников: {last_user_data.employee_count}\n"
+            f"Число кадровых специалистов: {last_user_data.hr_specialist_count}\n"
+            f"Документов в год на сотрудника: {last_user_data.documents_per_employee}\n"
+            f"Страниц в документе: {last_user_data.pages_per_document}\n"
+            f"Текучка в процентах: {last_user_data.turnover_percentage}\n"
+            f"Средняя зарплата: {format_number(last_user_data.average_salary)}\n"
+            f"Стоимость курьерской доставки: {format_number(last_user_data.courier_delivery_cost)}\n"
+            f"Процент отправки кадровых документов: {last_user_data.hr_delivery_percentage}\n\n"
             f"Результаты расчета:\n"
-            f"Распечатывание, хранение документов: {last_user_data.total_paper_costs} руб.\n"
-            f"Расходы на доставку документов: {last_user_data.total_logistics_costs} руб.\n"
-            f"Расходы на оплату времени по работе с документами: {last_user_data.total_operations_costs} руб.\n"
-            f"Итого расходы при КДП на бумаге: {last_user_data.total_paper_costs + last_user_data.total_logistics_costs + last_user_data.total_operations_costs} руб.\n"
-            f"Сумма КЭДО от HRlink: {last_user_data.total_license_costs} руб.\n"
-            f"Сумма выгоды: {last_user_data.total_paper_costs + last_user_data.total_logistics_costs + last_user_data.total_operations_costs - last_user_data.total_license_costs} руб."
+            f"Распечатывание, хранение документов: {format_number(last_user_data.total_paper_costs)} руб.\n"
+            f"Расходы на доставку документов: {format_number(last_user_data.total_logistics_costs)} руб.\n"
+            f"Расходы на оплату времени по работе с документами: {format_number(last_user_data.total_operations_costs)} руб.\n"
+            f"Итого расходы при КДП на бумаге: {format_number(last_user_data.total_paper_costs + last_user_data.total_logistics_costs + last_user_data.total_operations_costs)} руб.\n"
+            f"Сумма КЭДО от HRlink: {format_number(last_user_data.total_license_costs)} руб.\n"
+            f"Сумма выгоды: {format_number(last_user_data.total_paper_costs + last_user_data.total_logistics_costs + last_user_data.total_operations_costs - last_user_data.total_license_costs)} руб."
         )
 
         # Отправка сообщения через Telegram
-        send_telegram_message(message)
+        send_telegram_message(message, last_user_data)
 
         logger.info("Feedback submitted successfully")
         return templates.TemplateResponse("feedback_success.html", {"request": request})
