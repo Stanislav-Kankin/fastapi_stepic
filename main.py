@@ -28,6 +28,15 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
+def format_number_filter(value):
+    return "{:,.2f}".format(value).replace(
+        ",", " "
+        ).replace(".00", "")
+
+
+templates.env.filters["format_number"] = format_number_filter
+
+
 @app.on_event("startup")
 async def startup():
     init_db()
