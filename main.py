@@ -146,9 +146,9 @@ async def submit_feedback(
 
     try:
         # Получение последних результатов расчета
-        us_data = session.query(UserData).order_by(UserData.id.desc()).first()
+        last_user_data = session.query(UserData).order_by(UserData.id.desc()).first()
 
-        if not us_data:
+        if not last_user_data:
             logger.error("No calculation results found")
             return templates.TemplateResponse(
                 "error.html", {
@@ -166,43 +166,43 @@ async def submit_feedback(
             f"*Email:* {email}\n"
             f"*Предпочтительный способ связи:* {preferred_contact}\n\n"
             f"*Ранее введенные данные:*\n"
-            f"*Название организации:* {us_data.organization_name}\n"
-            f"*Число сотрудников:* {us_data.employee_count}\n"
+            f"*Название организации:* {last_user_data.organization_name}\n"
+            f"*Число сотрудников:* {last_user_data.employee_count}\n"
             f"*Число кадровых специалистов:* {
-                us_data.hr_specialist_count}\n"
+                last_user_data.hr_specialist_count}\n"
             f"*Документов в год на сотрудника:* {
-                us_data.documents_per_employee}\n"
-            f"*Страниц в документе:* {us_data.pages_per_document}\n"
-            f"*Текучка в процентах:* {us_data.turnover_percentage}\n"
+                last_user_data.documents_per_employee}\n"
+            f"*Страниц в документе:* {last_user_data.pages_per_document}\n"
+            f"*Текучка в процентах:* {last_user_data.turnover_percentage}\n"
             f"*Средняя зарплата:* {
-                format_number(us_data.average_salary)}\n"
+                format_number(last_user_data.average_salary)}\n"
             f"*Стоимость курьерской доставки:* {format_number(
-                us_data.courier_delivery_cost)}\n"
+                last_user_data.courier_delivery_cost)}\n"
             f"*Процент отправки кадровых документов:* {
-                us_data.hr_delivery_percentage}\n\n"
+                last_user_data.hr_delivery_percentage}\n\n"
             f"*Результаты расчета:*\n"
             f"*Распечатывание, хранение документов:* {format_number(
-                us_data.total_paper_costs)} руб.\n"
+                last_user_data.total_paper_costs)} руб.\n"
             f"*Расходы на доставку документов:* {format_number(
-                us_data.total_logistics_costs)} руб.\n"
+                last_user_data.total_logistics_costs)} руб.\n"
             f"*Расходы на оплату времени по работе с документами:* {
-                format_number(us_data.total_operations_costs)} руб.\n"
+                format_number(last_user_data.total_operations_costs)} руб.\n"
             f"*Итого расходы при КДП на бумаге:* {
                 format_number(
-                    us_data.total_paper_costs +
-                    us_data.total_logistics_costs +
-                    us_data.total_operations_costs)} руб.\n"
+                    last_user_data.total_paper_costs +
+                    last_user_data.total_logistics_costs +
+                    last_user_data.total_operations_costs)} руб.\n"
             f"*Сумма КЭДО от HRlink:* {format_number(
-                us_data.total_license_costs)} руб.\n"
+                last_user_data.total_license_costs)} руб.\n"
             f"*Сумма выгоды:* {format_number(
-                us_data.total_paper_costs +
-                us_data.total_logistics_costs +
-                us_data.total_operations_costs -
-                us_data.total_license_costs)} руб."
+                last_user_data.total_paper_costs +
+                last_user_data.total_logistics_costs +
+                last_user_data.total_operations_costs -
+                last_user_data.total_license_costs)} руб."
         )
 
         # Отправка сообщения через Telegram
-        send_telegram_message(message, us_data)
+        send_telegram_message(message, last_user_data)
 
         logger.info("Feedback submitted successfully")
         return templates.TemplateResponse(
