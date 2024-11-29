@@ -5,9 +5,9 @@ from fastapi import FastAPI, Request, Form, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from database import init_db, get_db_session
-from models import UserData, PaperCosts, LicenseCosts, TypicalOperations  # Добавьте эти импорты
+from models import UserData, PaperCosts, LicenseCosts, TypicalOperations
 from calculator import calculate_costs
-from telegram_bot import send_telegram_message, format_number  # Импортируем функции
+from telegram_bot import send_telegram_message, format_number
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 # Настройка логирования в файл
 file_handler = RotatingFileHandler('app.log', maxBytes=1000000, backupCount=3)
 file_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
@@ -25,26 +27,32 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+
 @app.on_event("startup")
 async def startup():
     init_db()
     logger.info("Application startup")
 
+
 @app.on_event("shutdown")
 async def shutdown():
     logger.info("Application shutdown")
+
 
 @app.get("/")
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+
 @app.get("/form")
 async def read_form(request: Request):
     return templates.TemplateResponse("form.html", {"request": request})
 
+
 @app.get("/feedback")
 async def read_feedback(request: Request):
     return templates.TemplateResponse("feedback.html", {"request": request})
+
 
 @app.post("/calculate")
 async def calculate(
@@ -58,7 +66,7 @@ async def calculate(
     average_salary: float = Form(...),
     courier_delivery_cost: float = Form(...),
     hr_delivery_percentage: float = Form(...),
-    session = Depends(get_db_session)
+    session=Depends(get_db_session)
 ):
     logger.info("Received calculation request")
     logger.debug(f"Data: {locals()}")
@@ -70,7 +78,12 @@ async def calculate(
 
         if not paper_costs or not license_costs or not typical_operations:
             logger.error("Missing data in the database")
-            return templates.TemplateResponse("error.html", {"request": request, "message": "Missing data in the database"})
+            return templates.TemplateResponse(
+                "error.html", {
+                    "request": request,
+                    "message": "Missing data in the database"
+                    }
+                    )
 
         data = {
             "organization_name": organization_name,
@@ -84,7 +97,9 @@ async def calculate(
             "hr_delivery_percentage": hr_delivery_percentage
         }
 
-        results = calculate_costs(data, paper_costs, license_costs, typical_operations)
+        results = calculate_costs(
+            data, paper_costs, license_costs, typical_operations
+            )
 
         user_data = UserData(
             organization_name=data["organization_name"],
@@ -105,11 +120,16 @@ async def calculate(
         session.commit()
 
         logger.info("Calculation completed successfully")
-        return templates.TemplateResponse("result.html", {"request": request, "results": results})
+        return templates.TemplateResponse(
+            "result.html", {
+                "request": request, "results": results})
 
     except Exception as e:
         logger.error(f"Error during calculation: {e}")
-        return templates.TemplateResponse("error.html", {"request": request, "message": str(e)})
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request, "message": str(e)})
+
 
 @app.post("/submit_feedback")
 async def submit_feedback(
@@ -119,52 +139,78 @@ async def submit_feedback(
     phone: str = Form(...),
     email: str = Form(...),
     preferred_contact: str = Form(...),
-    session = Depends(get_db_session)
+    session=Depends(get_db_session)
 ):
     logger.info("Received feedback submission")
     logger.debug(f"Data: {locals()}")
 
     try:
         # Получение последних результатов расчета
-        last_user_data = session.query(UserData).order_by(UserData.id.desc()).first()
+        us_data = session.query(UserData).order_by(UserData.id.desc()).first()
 
-        if not last_user_data:
+        if not us_data:
             logger.error("No calculation results found")
-            return templates.TemplateResponse("error.html", {"request": request, "message": "No calculation results found"})
+            return templates.TemplateResponse(
+                "error.html", {
+                    "request": request,
+                    "message": "No calculation results found"
+                    }
+                    )
 
         # Формирование сообщения для Telegram
         message = (
-            f"Новая обратная связь:\n\n"
-            f"ИНН: {inn}\n"
-            f"Имя: {name}\n"
-            f"Телефон: {phone}\n"
-            f"Email: {email}\n"
-            f"Предпочтительный способ связи: {preferred_contact}\n\n"
-            f"Ранее введенные данные:\n"
-            f"Название организации: {last_user_data.organization_name}\n"
-            f"Число сотрудников: {last_user_data.employee_count}\n"
-            f"Число кадровых специалистов: {last_user_data.hr_specialist_count}\n"
-            f"Документов в год на сотрудника: {last_user_data.documents_per_employee}\n"
-            f"Страниц в документе: {last_user_data.pages_per_document}\n"
-            f"Текучка в процентах: {last_user_data.turnover_percentage}\n"
-            f"Средняя зарплата: {format_number(last_user_data.average_salary)}\n"
-            f"Стоимость курьерской доставки: {format_number(last_user_data.courier_delivery_cost)}\n"
-            f"Процент отправки кадровых документов: {last_user_data.hr_delivery_percentage}\n\n"
-            f"Результаты расчета:\n"
-            f"Распечатывание, хранение документов: {format_number(last_user_data.total_paper_costs)} руб.\n"
-            f"Расходы на доставку документов: {format_number(last_user_data.total_logistics_costs)} руб.\n"
-            f"Расходы на оплату времени по работе с документами: {format_number(last_user_data.total_operations_costs)} руб.\n"
-            f"Итого расходы при КДП на бумаге: {format_number(last_user_data.total_paper_costs + last_user_data.total_logistics_costs + last_user_data.total_operations_costs)} руб.\n"
-            f"Сумма КЭДО от HRlink: {format_number(last_user_data.total_license_costs)} руб.\n"
-            f"Сумма выгоды: {format_number(last_user_data.total_paper_costs + last_user_data.total_logistics_costs + last_user_data.total_operations_costs - last_user_data.total_license_costs)} руб."
+            f"*Новая обратная связь:*\n\n"
+            f"*ИНН:* {inn}\n"
+            f"*Имя:* {name}\n"
+            f"*Телефон:* {phone}\n"
+            f"*Email:* {email}\n"
+            f"*Предпочтительный способ связи:* {preferred_contact}\n\n"
+            f"*Ранее введенные данные:*\n"
+            f"*Название организации:* {us_data.organization_name}\n"
+            f"*Число сотрудников:* {us_data.employee_count}\n"
+            f"*Число кадровых специалистов:* {
+                us_data.hr_specialist_count}\n"
+            f"*Документов в год на сотрудника:* {
+                us_data.documents_per_employee}\n"
+            f"*Страниц в документе:* {us_data.pages_per_document}\n"
+            f"*Текучка в процентах:* {us_data.turnover_percentage}\n"
+            f"*Средняя зарплата:* {
+                format_number(us_data.average_salary)}\n"
+            f"*Стоимость курьерской доставки:* {format_number(
+                us_data.courier_delivery_cost)}\n"
+            f"*Процент отправки кадровых документов:* {
+                us_data.hr_delivery_percentage}\n\n"
+            f"*Результаты расчета:*\n"
+            f"*Распечатывание, хранение документов:* {format_number(
+                us_data.total_paper_costs)} руб.\n"
+            f"*Расходы на доставку документов:* {format_number(
+                us_data.total_logistics_costs)} руб.\n"
+            f"*Расходы на оплату времени по работе с документами:* {
+                format_number(us_data.total_operations_costs)} руб.\n"
+            f"*Итого расходы при КДП на бумаге:* {
+                format_number(
+                    us_data.total_paper_costs +
+                    us_data.total_logistics_costs +
+                    us_data.total_operations_costs)} руб.\n"
+            f"*Сумма КЭДО от HRlink:* {format_number(
+                us_data.total_license_costs)} руб.\n"
+            f"*Сумма выгоды:* {format_number(
+                us_data.total_paper_costs +
+                us_data.total_logistics_costs +
+                us_data.total_operations_costs -
+                us_data.total_license_costs)} руб."
         )
 
         # Отправка сообщения через Telegram
-        send_telegram_message(message, last_user_data)
+        send_telegram_message(message, us_data)
 
         logger.info("Feedback submitted successfully")
-        return templates.TemplateResponse("feedback_success.html", {"request": request})
+        return templates.TemplateResponse(
+            "feedback_succsess.html", {"request": request}
+            )
 
     except Exception as e:
         logger.error(f"Error during feedback submission: {e}")
-        return templates.TemplateResponse("error.html", {"request": request, "message": str(e)})
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "message": str(e)}
+            )

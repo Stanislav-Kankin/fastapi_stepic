@@ -4,6 +4,7 @@ from datetime import datetime
 
 Base = declarative_base()
 
+
 class UserData(Base):
     __tablename__ = 'user_data'
 
@@ -23,6 +24,7 @@ class UserData(Base):
     total_operations_costs = Column(Float)
     total_license_costs = Column(Float)
 
+
 class PaperCosts(Base):
     __tablename__ = 'paper_costs'
 
@@ -32,6 +34,7 @@ class PaperCosts(Base):
     storage_cost = Column(Float, default=1.56)
     rent_cost = Column(Float, default=0.07)
 
+
 class LicenseCosts(Base):
     __tablename__ = 'license_costs'
 
@@ -39,6 +42,7 @@ class LicenseCosts(Base):
     main_license_cost = Column(Float, default=15000)
     hr_license_cost = Column(Float, default=15000)
     employee_license_cost = Column(Float, default=700)
+
 
 class TypicalOperations(Base):
     __tablename__ = 'typical_operations'

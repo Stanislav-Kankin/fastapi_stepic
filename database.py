@@ -8,6 +8,7 @@ DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 def init_db():
     Base.metadata.create_all(bind=engine)
     session = SessionLocal()
@@ -29,6 +30,7 @@ def init_db():
 
     session.commit()
     session.close()
+
 
 def get_db_session():
     db = SessionLocal()
