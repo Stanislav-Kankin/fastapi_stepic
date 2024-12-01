@@ -16,26 +16,31 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin: 50px auto;
     max-width: 600px;
-    background: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
+    background: url('/static/images/img1.jpg') no-repeat center center;
+    background-size: cover;
+    color: #000; /* Черный текст */
 }
 
 h1 {
-    color: #333;
+    color: #000000; /* Черный текст */
     text-align: center;
 }
 
 form {
     max-width: 600px;
     margin: auto;
-    background: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
+    background: url('/static/images/background.jpg') no-repeat center center;
+    background-size: cover;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: #000; /* Черный текст */
 }
 
 label {
     display: block;
     margin-bottom: 10px;
+    color: #000; /* Черный текст */
 }
 
 input[type="text"], input[type="number"], input[type="email"] {
@@ -44,6 +49,8 @@ input[type="text"], input[type="number"], input[type="email"] {
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.8); /* Полупрозрачный фон для контраста */
+    color: #333; /* Черный текст */
 }
 
 input[type="submit"] {
@@ -89,14 +96,30 @@ input[type="submit"]:hover {
     margin: 20px auto;
     max-width: 300px;
     text-align: center;
+    color: #621d0f; /* Черный текст */
 }
 
-.info-box a {
-    color: #4CAF50;
+.info-box:nth-child(1) {
+    background: url('/static/images/img3.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.info-box:nth-child(2) {
+    background: url('/static/images/img4.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.info-box:nth-child(3) {
+    background: url('/static/images/img2.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.info-link {
+    color: red; /* Красный текст для ссылок */
     text-decoration: none;
 }
 
-.info-box a:hover {
+.info-link:hover {
     text-decoration: underline;
 }
 
@@ -107,13 +130,52 @@ input[type="submit"]:hover {
     margin-top: 20px;
 }
 
-/* Стили для ссылок в информационных блоках */
-.info-link {
-    color: #4CAF50;
-    text-decoration: none;
-    font-weight: bold;
+/* Стили для контейнера результатов */
+.result-container {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 50px auto;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
+    color: #000; /* Черный текст */
 }
 
-.info-link:hover {
-    text-decoration: underline;
+/* Медиа-запросы для адаптивного дизайна */
+@media (max-width: 768px) {
+    .centered-container, form, .result-container {
+        padding: 15px;
+        margin: 20px auto;
+        max-width: 90%;
+    }
+
+    .info-boxes {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .info-box {
+        max-width: 90%;
+        margin: 10px auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .centered-container, form, .result-container {
+        padding: 10px;
+        margin: 10px auto;
+        max-width: 95%;
+    }
+
+    .info-boxes {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .info-box {
+        max-width: 95%;
+        margin: 5px auto;
+    }
 }

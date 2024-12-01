@@ -108,7 +108,7 @@ async def calculate(
 
         results = calculate_costs(
             data, paper_costs, license_costs, typical_operations
-            )
+        )
 
         user_data = UserData(
             organization_name=data["organization_name"],
