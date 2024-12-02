@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: url('/static/images/background.jpg') no-repeat center center fixed;
+    background: url('/static/images/bg.jpg') no-repeat center center fixed;
     background-size: cover;
     color: #333;
 }
@@ -16,13 +16,13 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin: 50px auto;
     max-width: 600px;
-    background: url('/static/images/img1.jpg') no-repeat center center;
+    background: url('/static/images/1.png') no-repeat center center;
     background-size: cover;
     color: #000; /* Черный текст */
 }
 
 h1 {
-    color: #000000; /* Черный текст */
+    color: #ffffff; /* Черный текст */
     text-align: center;
 }
 
@@ -89,33 +89,33 @@ input[type="submit"]:hover {
 
 .info-box {
     border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 60px;
+    border-radius: 12px;
+    box-shadow: 2 2 100px rgba(0, 0, 0, 0.1);
     background: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
     margin: 20px auto;
     max-width: 300px;
     text-align: center;
-    color: #621d0f; /* Черный текст */
+    color: #000000; /* Черный текст */
 }
 
 .info-box:nth-child(1) {
-    background: url('/static/images/img3.jpg') no-repeat center center;
+    background: url('/static/images/2.jpg') no-repeat center center;
     background-size: cover;
 }
 
 .info-box:nth-child(2) {
-    background: url('/static/images/img4.jpg') no-repeat center center;
+    background: url('/static/images/4.jpg') no-repeat center center;
     background-size: cover;
 }
 
 .info-box:nth-child(3) {
-    background: url('/static/images/img2.jpg') no-repeat center center;
+    background: url('/static/images/3.jpg') no-repeat center center;
     background-size: cover;
 }
 
 .info-link {
-    color: red; /* Красный текст для ссылок */
+    color: rgb(55, 3, 186); /* Красный текст для ссылок */
     text-decoration: none;
 }
 
