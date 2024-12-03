@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def format_number(value):
-    return "{:,.2f}".format(value).replace(",", " ").replace(".00", "")
+    return "{:,.0f}".format(value).replace(",", " ")
 
 
 def send_telegram_message(message, user_data):

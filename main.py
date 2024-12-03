@@ -29,9 +29,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 def format_number_filter(value):
-    return "{:,.2f}".format(value).replace(
-        ",", " "
-        ).replace(".00", "")
+    return "{:,.0f}".format(value).replace(",", " ")
 
 
 templates.env.filters["format_number"] = format_number_filter
