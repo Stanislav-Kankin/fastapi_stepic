@@ -16,13 +16,13 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin: 50px auto;
     max-width: 600px;
-    background: url('/static/images/1.png') no-repeat center center;
+    background: url('/static/images/23.jpg') no-repeat center center;
     background-size: cover;
     color: #000; /* Черный текст */
 }
 
 h1 {
-    color: #ffffff; /* Черный текст */
+    color: #000000; /* Черный текст */
     text-align: center;
 }
 
@@ -100,17 +100,17 @@ input[type="submit"]:hover {
 }
 
 .info-box:nth-child(1) {
-    background: url('/static/images/fon.jpg') no-repeat center center;
+    background: url('/static/images/container.jpg') no-repeat center center;
     background-size: cover;
 }
 
 .info-box:nth-child(2) {
-    background: url('/static/images/fon.jpg') no-repeat center center;
+    background: url('/static/images/container1.jpg') no-repeat center center;
     background-size: cover;
 }
 
 .info-box:nth-child(3) {
-    background: url('/static/images/fon.jpg') no-repeat center center;
+    background: url('/static/images/container2.jpg') no-repeat center center;
     background-size: cover;
 }
 

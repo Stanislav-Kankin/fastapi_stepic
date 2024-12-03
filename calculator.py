@@ -1,4 +1,3 @@
-# calculator.py
 from sqlalchemy.orm import sessionmaker
 from models import PaperCosts, TypicalOperations
 from database import engine

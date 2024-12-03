@@ -1,4 +1,3 @@
-# main.py
 import logging
 from logging.handlers import RotatingFileHandler
 from fastapi import FastAPI, Request, Form, Depends
