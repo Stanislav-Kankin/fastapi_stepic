@@ -100,17 +100,17 @@ input[type="submit"]:hover {
 }
 
 .info-box:nth-child(1) {
-    background: url('/static/images/2.jpg') no-repeat center center;
+    background: url('/static/images/fon.jpg') no-repeat center center;
     background-size: cover;
 }
 
 .info-box:nth-child(2) {
-    background: url('/static/images/4.jpg') no-repeat center center;
+    background: url('/static/images/fon.jpg') no-repeat center center;
     background-size: cover;
 }
 
 .info-box:nth-child(3) {
-    background: url('/static/images/3.jpg') no-repeat center center;
+    background: url('/static/images/fon.jpg') no-repeat center center;
     background-size: cover;
 }
 
