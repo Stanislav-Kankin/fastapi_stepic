@@ -40,7 +40,7 @@ form {
 label {
     display: block;
     margin-bottom: 10px;
-    color: #000; /* Черный текст */
+    color: #0b0b0b; /* Черный текст */
 }
 
 input[type="text"], input[type="number"], input[type="email"] {
