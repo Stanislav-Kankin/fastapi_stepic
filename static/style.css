@@ -49,7 +49,7 @@ input[type="text"], input[type="number"], input[type="email"] {
     margin-bottom: 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.8); /* Полупрозрачный фон для контраста */
+    background-color: rgba(204, 188, 188, 0.8); /* Полупрозрачный фон для контраста */
     color: #333; /* Черный текст */
 }
 
