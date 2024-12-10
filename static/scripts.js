@@ -1,3 +1,4 @@
+// Проверка заполнения полей формы
 document.querySelector('form').addEventListener('submit', function(event) {
     event.preventDefault(); // Предотвращаем отправку формы
 
@@ -17,7 +18,30 @@ document.querySelector('form').addEventListener('submit', function(event) {
     if (!isValid) {
         alert('Пожалуйста, заполните все поля корректно.');
     } else {
-        // Если все поля заполнены, отправляем форму
-        event.target.submit();
+        // Если все поля заполнены, запускаем анимацию кнопки
+        animateButton(event.target);
     }
 });
+
+// Анимация кнопки "Рассчитать"
+function animateButton(form) {
+    const button = form.querySelector('.calculate-button');
+
+    // Анимация кнопки: становится круглой, нежно голубой, пульсирует
+    button.classList.add('loading');
+    button.querySelector('.loading-icon').textContent = '?'; // Знак вопроса
+
+    // Ждем 3 секунды (время выполнения расчетов)
+    setTimeout(() => {
+        // Анимация успеха: зеленый круг с галочкой
+        button.classList.remove('loading');
+        button.classList.add('success');
+        button.querySelector('.loading-icon').textContent = '✔'; // Галочка
+
+        // Ждем 1 секунду, чтобы показать галочку
+        setTimeout(() => {
+            // Отправляем форму
+            form.submit();
+        }, 1000);
+    }, 3000);
+}
