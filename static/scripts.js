@@ -27,21 +27,34 @@ document.querySelector('form').addEventListener('submit', function(event) {
 function animateButton(form) {
     const button = form.querySelector('.calculate-button');
 
-    // Анимация кнопки: становится круглой, нежно голубой, пульсирует
+    // Анимация кнопки: становится овальной, нежно голубой, выводит текст "считаем..."
     button.classList.add('loading');
-    button.querySelector('.loading-icon').textContent = '?'; // Знак вопроса
+    button.value = 'Считаем...';
 
-    // Ждем 3 секунды (время выполнения расчетов)
+    // Ждем 2 секунды
     setTimeout(() => {
-        // Анимация успеха: зеленый круг с галочкой
+        // Возвращаем кнопку в исходное состояние с текстом "Успех!"
         button.classList.remove('loading');
         button.classList.add('success');
-        button.querySelector('.loading-icon').textContent = '✔'; // Галочка
+        button.value = 'Успех!';
 
-        // Ждем 1 секунду, чтобы показать галочку
+        // Запускаем анимацию конфети
+        fireConfetti();
+
+        // Ждем 1 секунду, чтобы показать текст "Успех!"
         setTimeout(() => {
             // Отправляем форму
             form.submit();
-        }, 1000);
+        }, 1500);
     }, 3000);
+}
+
+// Анимация конфети
+function fireConfetti() {
+    confetti({
+        particleCount: 200, // Количество частиц
+        spread: 100, // Распространение
+        origin: { y: 0.6 }, // Положение взрыва (внизу)
+        colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'], // Цвета конфети
+    });
 }
