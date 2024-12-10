@@ -179,3 +179,35 @@ input[type="submit"]:hover {
         margin: 5px auto;
     }
 }
+
+/* Добавленные стили */
+.info-box:hover {
+    transform: scale(1.1); /* Увеличение на 10% */
+    border-radius: 50%; /* Делаем блоки круглыми */
+    transition: transform 0.3s ease, border-radius 0.3s ease; /* Плавный переход */
+}
+
+.calculate-button {
+    position: relative;
+}
+
+.loading-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    display: none;
+}
+
+.calculate-button.loading {
+    color: transparent; /* Скрываем текст */
+}
+
+.calculate-button.loading + .loading-icon {
+    display: block; /* Показываем иконку */
+}
+
+.error {
+    border: 2px solid red;
+}

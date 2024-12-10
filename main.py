@@ -77,7 +77,73 @@ async def calculate(
     logger.info("Received calculation request")
     logger.debug(f"Data: {locals()}")
 
+    # Проверка входных данных
+    if not organization_name:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Название организации не может быть пустым."
+            }
+        )
+    if employee_count <= 0:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Число сотрудников должно быть больше 0."
+            }
+        )
+    if hr_specialist_count < 0:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Число кадровых специалистов не может быть отрицательным."
+            }
+        )
+    if documents_per_employee <= 0:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Количество документов на сотрудника должно быть больше 0."
+            }
+        )
+    if pages_per_document <= 0:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Количество страниц в документе должно быть больше 0."
+            }
+        )
+    if turnover_percentage < 0 or turnover_percentage > 100:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Текучка должна быть в диапазоне от 0 до 100."
+            }
+        )
+    if average_salary <= 0:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Средняя зарплата должна быть больше 0."
+            }
+        )
+    if courier_delivery_cost < 0:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Стоимость курьерской доставки не может быть отрицательной."
+            }
+        )
+    if hr_delivery_percentage < 0 or hr_delivery_percentage > 100:
+        return templates.TemplateResponse(
+            "error.html", {
+                "request": request,
+                "message": "Процент отправки кадровых документов должен быть в диапазоне от 0 до 100."
+            }
+        )
+
     try:
+        # Получение данных из базы данных
         paper_costs = session.query(PaperCosts).first()
         license_costs = session.query(LicenseCosts).first()
         typical_operations = session.query(TypicalOperations).first()
@@ -87,10 +153,11 @@ async def calculate(
             return templates.TemplateResponse(
                 "error.html", {
                     "request": request,
-                    "message": "Missing data in the database"
-                    }
-                    )
+                    "message": "Отсутствуют данные в базе данных. Пожалуйста, свяжитесь с администратором."
+                }
+            )
 
+        # Расчет стоимости
         data = {
             "organization_name": organization_name,
             "employee_count": employee_count,
@@ -107,6 +174,7 @@ async def calculate(
             data, paper_costs, license_costs, typical_operations
         )
 
+        # Сохранение данных в базу данных
         user_data = UserData(
             organization_name=data["organization_name"],
             employee_count=data["employee_count"],
@@ -126,15 +194,23 @@ async def calculate(
         session.commit()
 
         logger.info("Calculation completed successfully")
+
+        # Возврат результатов пользователю
         return templates.TemplateResponse(
             "result.html", {
-                "request": request, "results": results})
+                "request": request,
+                "results": results
+            }
+        )
 
     except Exception as e:
         logger.error(f"Error during calculation: {e}")
         return templates.TemplateResponse(
             "error.html", {
-                "request": request, "message": str(e)})
+                "request": request,
+                "message": f"Произошла ошибка: {str(e)}"
+            }
+        )
 
 
 @app.post("/submit_feedback")
