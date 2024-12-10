@@ -189,25 +189,88 @@ input[type="submit"]:hover {
 
 .calculate-button {
     position: relative;
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 16px;
+    color: white;
+    background-color: #4CAF50; /* Зеленый цвет */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
+.calculate-button:hover {
+    background-color: #45a049; /* Темнее зеленый */
+}
+
+/* Стили для иконки загрузки */
 .loading-icon {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 24px;
+    color: white;
     display: none;
 }
 
+/* Анимация кнопки */
 .calculate-button.loading {
+    background-color: #64B5F6; /* Нежно голубой цвет */
+    border-radius: 50%; /* Круглая форма */
+    width: 60px;
+    height: 60px;
+    padding: 0;
     color: transparent; /* Скрываем текст */
+    animation: pulse 1.5s infinite; /* Анимация пульсации */
 }
 
-.calculate-button.loading + .loading-icon {
+.calculate-button.loading .loading-icon {
     display: block; /* Показываем иконку */
 }
 
+.calculate-button.success {
+    background-color: #4CAF50; /* Зеленый цвет */
+    border-radius: 50%; /* Круглая форма */
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    color: transparent; /* Скрываем текст */
+    animation: success 1s forwards; /* Анимация успеха */
+}
+
+.calculate-button.success .loading-icon {
+    content: "✔"; /* Галочка */
+}
+
+/* Анимация пульсации */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Анимация успеха */
+@keyframes success {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Стили для выделения ошибок */
 .error {
     border: 2px solid red;
 }
