@@ -3,6 +3,19 @@
 <head>
     <title>Результаты расчёта</title>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <style>
+        .graph-container {
+            max-width: 100%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .graph-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
     <div class="result-container">
@@ -13,7 +26,12 @@
         <p>Итого расходы при КДП на бумаге: {{ (results.total_paper_costs + results.total_logistics_costs + results.total_operations_costs)|format_number }} руб.</p>
         <p>Сумма КЭДО от HRlink: {{ results.total_license_costs|format_number }} руб.</p>
         <p>Сумма выгоды: {{ (results.total_paper_costs + results.total_logistics_costs + results.total_operations_costs - results.total_license_costs)|format_number }} руб.</p>
-        <img src="/static/cost_graph.png" alt="График сравнения расходов">
+
+        <!-- Контейнер для графика -->
+        <div class="graph-container">
+            <img src="{{ graph_path }}" alt="График сравнения расходов">
+        </div>
+
         <div class="button-container">
             <a href="/form" class="button">Повторить расчёты</a>
             <a href="/feedback" class="button">Заказать обратный звонок</a>

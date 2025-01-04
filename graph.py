@@ -11,7 +11,7 @@ def generate_cost_graph(
     kedo_costs = total_license_costs
 
     # Создание графика
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 5))  # Уменьшили размер графика
     plt.bar(
         ['Текущий КДП', 'КЭДО от HRlink'],
         [current_kdp_costs, kedo_costs], color=['green', 'blue']
@@ -23,7 +23,7 @@ def generate_cost_graph(
 
     # Сохранение графика в файл
     graph_path = 'static/cost_graph.png'
-    plt.savefig(graph_path)
+    plt.savefig(graph_path, bbox_inches='tight')  # Убрали лишние отступы
     plt.close()
 
     return graph_path
