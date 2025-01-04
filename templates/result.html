@@ -15,23 +15,76 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .result-block {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .result-block h2 {
+            margin-top: 0;
+        }
+        .result-block p {
+            margin: 10px 0;
+        }
+        .result-block ul {
+            padding-left: 20px;
+        }
+        .bold-underline {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .underline {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="result-container">
         <h1>Результаты расчёта</h1>
-        <p>Распечатывание, хранение документов: {{ results.total_paper_costs|format_number }} руб.</p>
-        <p>Расходы на доставку документов: {{ results.total_logistics_costs|format_number }} руб.</p>
-        <p>Расходы на оплату времени по работе с документами: {{ results.total_operations_costs|format_number }} руб.</p>
-        <p>Итого расходы при КДП на бумаге: {{ (results.total_paper_costs + results.total_logistics_costs + results.total_operations_costs)|format_number }} руб.</p>
-        <p>Сумма КЭДО от HRlink: {{ results.total_license_costs|format_number }} руб.</p>
-        <p>Сумма выгоды: {{ (results.total_paper_costs + results.total_logistics_costs + results.total_operations_costs - results.total_license_costs)|format_number }} руб.</p>
 
-        <!-- Контейнер для графика -->
+        <!-- График -->
         <div class="graph-container">
             <img src="{{ graph_path }}" alt="График сравнения расходов">
         </div>
 
+        <!-- Блок 1: Основные выводы -->
+        <div class="result-block">
+            <h2>ОСНОВНЫЕ ВЫВОДЫ ПО ВВЕДЕННЫМ ДАННЫМ</h2>
+            <p>Ваши расходы на бумажное КДП: <span class="bold-underline">{{ (results.total_paper_costs + results.total_logistics_costs + results.total_operations_costs)|format_number }} рублей в год</span></p>
+            <p>Печать и хранение кадровых документов: <span class="bold-underline">{{ results.total_paper_costs|format_number }} рублей в год</span></p>
+            <p>Доставка кадровых документов: <span class="bold-underline">{{ results.total_logistics_costs|format_number }} рублей в год</span></p>
+            <p>Оплата времени кадрового специалиста, которое он тратит на работу с документами: <span class="bold-underline">{{ results.total_operations_costs|format_number }} рублей в год</span></p>
+        </div>
+
+        <!-- Блок 2: Экономия и стоимость HRlink -->
+        <div class="result-block">
+            <h2>ЭКОНОМИЯ И СТОИМОСТЬ HRlink</h2>
+            <p class="bold-underline">Внедрив КЭДО от HRlink, вы сможете сэкономить {{ (results.total_paper_costs + results.total_logistics_costs + results.total_operations_costs - results.total_license_costs)|format_number }} рублей в год</p>
+            <p>Стоимость HRlink для вашей компании от: <span class="underline">{{ results.total_license_costs|format_number }} рублей в год</span></p>
+            <p>Стоимость решения КЭДО от HRlink в месяц от: <span class="underline">{{ (results.total_license_costs / 12)|format_number }} руб.</span></p>
+            <p>Точная цена рассчитывается менеджером индивидуально для каждого клиента.</p>
+        </div>
+
+        <!-- Блок 3: Преимущества HRlink -->
+        <div class="result-block">
+            <h2>ПРЕИМУЩЕСТВА HRlink</h2>
+            <p>Вы получите:</p>
+            <ul>
+                <li>множество интеграций с учетными системами и не только;</li>
+                <li>найм и работу с сотрудниками, самозанятыми и по ГПХ;</li>
+                <li>легитимное подписание и хранение документов;</li>
+                <li>удобный личный кабинет сотрудника;</li>
+                <li>гибкие маршруты и процессы;</li>
+                <li>все виды электронных подписей.</li>
+            </ul>
+            <p>Рекомендуемый тариф: HRlink {{ data.license_type|capitalize }}</p>
+            <p>Цена лицензии сотрудника от: {{ data.employee_license_cost|format_number }} рублей в год</p>
+        </div>
+
+        <!-- Кнопки -->
         <div class="button-container">
             <a href="/form" class="button">Повторить расчёты</a>
             <a href="/feedback" class="button">Заказать обратный звонок</a>

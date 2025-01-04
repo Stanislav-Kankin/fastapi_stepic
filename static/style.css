@@ -95,7 +95,7 @@ input[type="submit"]:hover {
     background: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
     margin: 20px auto;
     max-width: 300px;
-    text-align: center;
+    text-align: left; /* Выравнивание текста по левому краю */
     color: #000000; /* Черный текст */
 }
 
@@ -241,4 +241,14 @@ input[type="submit"]:hover {
     100% {
         transform: scale(1);
     }
+}
+
+/* Новые стили для форматирования текста */
+.bold-underline {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.underline {
+    text-decoration: underline;
 }

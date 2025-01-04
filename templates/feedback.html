@@ -7,9 +7,6 @@
 <body>
     <h1>Форма обратной связи</h1>
     <form action="/submit_feedback" method="post">
-        <label for="inn">ИНН Вашей организации:</label>
-        <input type="text" id="inn" name="inn" required><br><br>
-
         <label for="name">Как к Вам обращаться:</label>
         <input type="text" id="name" name="name" required><br><br>
 
@@ -19,12 +16,8 @@
         <label for="email">Электронная почта:</label>
         <input type="email" id="email" name="email" required><br><br>
 
-        <label for="preferred_contact">Какой способ связи предпочтителен?</label>
-        <select id="preferred_contact" name="preferred_contact" required>
-            <option value="звонок">Звонок</option>
-            <option value="мессенджер">Мессенджер</option>
-            <option value="почта">Почта</option>
-        </select><br><br>
+        <label for="organization_name">Название организации:</label>
+        <input type="text" id="organization_name" name="organization_name" required><br><br>
 
         <input type="submit" value="Отправить">
     </form>

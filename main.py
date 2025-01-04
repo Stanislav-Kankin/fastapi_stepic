@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, Form, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from database import init_db, get_db_session
 from models import UserData, PaperCosts, LicenseCosts, TypicalOperations
 from calculator import calculate_costs
@@ -34,23 +35,24 @@ async def shutdown():
 @app.get("/")
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+
 @app.get("/feedback")
 async def read_feedback(request: Request):
     return templates.TemplateResponse("feedback.html", {"request": request})
 
+
 @app.post("/submit_feedback")
 async def submit_feedback(
     request: Request,
-    inn: str = Form(...),
     name: str = Form(...),
     phone: str = Form(...),
     email: str = Form(...),
-    preferred_contact: str = Form(...),
+    organization_name: str = Form(...),
     session=Depends(get_db_session)
 ):
     try:
         # Логика обработки обратной связи
-        # Например, сохранение данных в базу или отправка уведомления
         return templates.TemplateResponse("feedback_success.html", {"request": request})
     except Exception as e:
         logging.error(f"Error during feedback submission: {e}")
@@ -67,6 +69,39 @@ async def read_form(request: Request):
     return templates.TemplateResponse("form.html", {"request": request})
 
 
+@app.post("/check_license")
+async def check_license(
+    request: Request,
+    organization_name: str = Form(...),
+    employee_count: int = Form(...),
+    hr_specialist_count: int = Form(...),
+    documents_per_employee: int = Form(...),
+    pages_per_document: float = Form(...),
+    turnover_percentage: float = Form(...),
+    average_salary: float = Form(...),
+    courier_delivery_cost: float = Form(...),
+    hr_delivery_percentage: float = Form(...),
+):
+    if employee_count <= 499:
+        return templates.TemplateResponse(
+            "license.html", {
+                "request": request,
+                "organization_name": organization_name,
+                "employee_count": employee_count,
+                "hr_specialist_count": hr_specialist_count,
+                "documents_per_employee": documents_per_employee,
+                "pages_per_document": pages_per_document,
+                "turnover_percentage": turnover_percentage,
+                "average_salary": average_salary,
+                "courier_delivery_cost": courier_delivery_cost,
+                "hr_delivery_percentage": hr_delivery_percentage,
+            }
+        )
+    else:
+        # Если сотрудников больше 499, сразу переходим к расчетам
+        return RedirectResponse(url="/calculate", status_code=307)
+
+
 @app.post("/calculate")
 async def calculate(
     request: Request,
@@ -79,10 +114,23 @@ async def calculate(
     average_salary: float = Form(...),
     courier_delivery_cost: float = Form(...),
     hr_delivery_percentage: float = Form(...),
-    license_type: str = Form(...),
+    license_type: str = Form(None),  # Опционально, если сотрудников <= 499
     session=Depends(get_db_session)
 ):
     try:
+        # Определяем стоимость лицензии
+        if employee_count <= 499:
+            if license_type == "lite":
+                employee_license_cost = 500
+            elif license_type == "standard":
+                employee_license_cost = 700
+            else:
+                employee_license_cost = 700  # По умолчанию
+        elif 500 <= employee_count <= 1999:
+            employee_license_cost = 700
+        else:
+            employee_license_cost = 600
+
         # Получение данных из базы данных
         paper_costs = session.query(PaperCosts).first()
         license_costs = session.query(LicenseCosts).first()
@@ -108,7 +156,8 @@ async def calculate(
             "average_salary": average_salary,
             "courier_delivery_cost": courier_delivery_cost,
             "hr_delivery_percentage": hr_delivery_percentage,
-            "license_type": license_type
+            "license_type": license_type,
+            "employee_license_cost": employee_license_cost
         }
 
         results = calculate_costs(
@@ -150,7 +199,8 @@ async def calculate(
             "result.html", {
                 "request": request,
                 "results": results,
-                "graph_path": graph_path  # Передаем путь к графику в шаблон
+                "graph_path": graph_path,  # Передаем путь к графику в шаблон
+                "data": data  # Передаем данные для отображения лицензии
             }
         )
 

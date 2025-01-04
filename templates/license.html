@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Выбор лицензии</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <style>
+        .license-option {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .license-option h3 {
+            margin-top: 0;
+        }
+        .license-option ul {
+            padding-left: 20px;
+        }
+        .license-option button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .license-option button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="centered-container">
+        <h1>Выбор лицензии</h1>
+        <p>Количество сотрудников: {{ employee_count }}</p>
+        <form action="/calculate" method="post">
+            <input type="hidden" name="organization_name" value="{{ organization_name }}">
+            <input type="hidden" name="employee_count" value="{{ employee_count }}">
+            <input type="hidden" name="hr_specialist_count" value="{{ hr_specialist_count }}">
+            <input type="hidden" name="documents_per_employee" value="{{ documents_per_employee }}">
+            <input type="hidden" name="pages_per_document" value="{{ pages_per_document }}">
+            <input type="hidden" name="turnover_percentage" value="{{ turnover_percentage }}">
+            <input type="hidden" name="average_salary" value="{{ average_salary }}">
+            <input type="hidden" name="courier_delivery_cost" value="{{ courier_delivery_cost }}">
+            <input type="hidden" name="hr_delivery_percentage" value="{{ hr_delivery_percentage }}">
+
+            <div class="license-option">
+                <h3>HRlink Lite</h3>
+                <p><b>HRlink Lite</b> - для простых кадровых процессов:</p>
+                <ul>
+                    <li>интеграции с «1С:ЗУП» и «1С:Фреш»;</li>
+                    <li>уведомления через Telegram или почту;</li>
+                    <li>облачное размещение;</li>
+                    <li>сопровождение через службу заботы.</li>
+                </ul>
+                <button type="submit" name="license_type" value="lite">Выбрать HRlink Lite</button>
+            </div>
+
+            <div class="license-option">
+                <h3>HRlink Standard</h3>
+                <p><b>HRlink Standard</b> - для кадровых процессов с нетиповыми маршрутами и большим количеством интеграций:</p>
+                <ul>
+                    <li>интеграции с «1С», «Битрикс24», «БОСС-Кадровик», SAP;</li>
+                    <li>уведомления через Telegram, почту и СМС;</li>
+                    <li>возможность доработок после внедрения;</li>
+                    <li>размещение на сервере;</li>
+                    <li>персональное сопровождение.</li>
+                </ul>
+                <button type="submit" name="license_type" value="standard">Выбрать HRlink Standard</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
