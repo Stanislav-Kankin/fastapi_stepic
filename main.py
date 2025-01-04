@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Form, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -8,12 +9,27 @@ from calculator import calculate_costs
 from graph import generate_cost_graph
 import logging
 
-app = FastAPI()
 
+# Используем lifespan для управления событиями запуска и завершения
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Логика инициализации (startup)
+    init_db()
+    logging.info("Application startup")
+    yield
+    # Логика завершения (shutdown)
+    logging.info("Application shutdown")
+
+app = FastAPI(lifespan=lifespan)
+
+# Монтируем статические файлы
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Настройка шаблонов Jinja2
 templates = Jinja2Templates(directory="templates")
 
 
+# Фильтр для форматирования чисел
 def format_number_filter(value):
     return "{:,.0f}".format(value).replace(",", " ")
 
@@ -21,27 +37,19 @@ def format_number_filter(value):
 templates.env.filters["format_number"] = format_number_filter
 
 
-@app.on_event("startup")
-async def startup():
-    init_db()
-    logging.info("Application startup")
-
-
-@app.on_event("shutdown")
-async def shutdown():
-    logging.info("Application shutdown")
-
-
+# Маршрут для главной страницы
 @app.get("/")
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
+# Маршрут для страницы обратной связи
 @app.get("/feedback")
 async def read_feedback(request: Request):
     return templates.TemplateResponse("feedback.html", {"request": request})
 
 
+# Обработка отправки формы обратной связи
 @app.post("/submit_feedback")
 async def submit_feedback(
     request: Request,
@@ -64,11 +72,13 @@ async def submit_feedback(
         )
 
 
+# Маршрут для страницы формы
 @app.get("/form")
 async def read_form(request: Request):
     return templates.TemplateResponse("form.html", {"request": request})
 
 
+# Проверка лицензии и переход к расчетам
 @app.post("/check_license")
 async def check_license(
     request: Request,
@@ -102,6 +112,7 @@ async def check_license(
         return RedirectResponse(url="/calculate", status_code=307)
 
 
+# Основной маршрут для расчетов
 @app.post("/calculate")
 async def calculate(
     request: Request,
@@ -212,3 +223,9 @@ async def calculate(
                 "message": f"Произошла ошибка: {str(e)}"
             }
         )
+
+
+# Запуск приложения
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)
