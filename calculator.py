@@ -1,5 +1,5 @@
 from sqlalchemy.orm import sessionmaker
-from models import PaperCosts, TypicalOperations
+from models import PaperCosts, TypicalOperations, LicenseCosts
 from database import engine
 
 Session = sessionmaker(bind=engine)
@@ -32,7 +32,7 @@ def calculate_total_paper_costs(pages_per_year):
 
 def calculate_total_logistics_costs(data, documents_per_year):
     courier_delivery_cost = data['courier_delivery_cost']
-    hr_delivery_percentage = data.get('hr_delivery_percentage')
+    hr_delivery_percentage = data.get('hr_delivery_percentage', 0)
     return courier_delivery_cost * (
         hr_delivery_percentage / 100 * documents_per_year)
 
@@ -68,11 +68,24 @@ def calculate_total_operations_costs(
 def calculate_total_license_costs(data, license_costs):
     hr_specialist_count = data['hr_specialist_count']
     employee_count = data['employee_count']
-    return (
-        license_costs.hr_license_cost * hr_specialist_count +
-        license_costs.employee_license_cost * employee_count +
-        license_costs.main_license_cost
+    license_type = data.get('license_type', 'standard')
+
+    # Стоимость лицензии для сотрудников
+    if license_type == 'lite':
+        employee_license_cost = 500
+    elif license_type == 'standard':
+        employee_license_cost = 700
+    elif license_type == 'enterprise':
+        employee_license_cost = 600
+    else:
+        employee_license_cost = license_costs.employee_license_cost
+
+    total_license_costs = (
+        license_costs.main_license_cost +
+        (license_costs.hr_license_cost * hr_specialist_count) +
+        (employee_license_cost * employee_count)
     )
+    return total_license_costs
 
 
 def calculate_costs(data, paper_costs, license_costs, typical_operations):

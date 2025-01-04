@@ -13,6 +13,7 @@
         <p>Итого расходы при КДП на бумаге: {{ (results.total_paper_costs + results.total_logistics_costs + results.total_operations_costs)|format_number }} руб.</p>
         <p>Сумма КЭДО от HRlink: {{ results.total_license_costs|format_number }} руб.</p>
         <p>Сумма выгоды: {{ (results.total_paper_costs + results.total_logistics_costs + results.total_operations_costs - results.total_license_costs)|format_number }} руб.</p>
+        <img src="/static/cost_graph.png" alt="График сравнения расходов">
         <div class="button-container">
             <a href="/form" class="button">Повторить расчёты</a>
             <a href="/feedback" class="button">Заказать обратный звонок</a>
