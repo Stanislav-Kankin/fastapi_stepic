@@ -1,5 +1,5 @@
 from sqlalchemy.orm import sessionmaker
-from models import PaperCosts, TypicalOperations, LicenseCosts
+from models import PaperCosts, TypicalOperations
 from database import engine
 
 Session = sessionmaker(bind=engine)
