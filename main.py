@@ -13,6 +13,23 @@ import logging
 # Используем lifespan для управления событиями запуска и завершения
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    ''' Контекстный менеджер для приложения FastAPI.
+
+Аргументы:
+
+app: приложение FastAPI
+Описание:
+
+Инициализирует базу данных.
+Записывает в лог информацию о запуске приложения.
+Выполняет логику завершения работы приложения.
+Записывает в лог информацию о завершении работы приложения.
+Этот контекстный менеджер используется для выполнения логики
+инициализации и завершения работы приложения FastAPI.
+При запуске приложения выполняется инициализация базы
+данных и записывается информация о запуске приложения.
+При завершении работы приложения записывается информация
+о его завершении. '''
     # Логика инициализации (startup)
     init_db()
     logging.info("Application startup")
@@ -31,6 +48,15 @@ templates = Jinja2Templates(directory="templates")
 
 # Фильтр для форматирования чисел
 def format_number_filter(value):
+    ''' Функция форматирования числа.
+
+Аргументы:
+
+value: число для форматирования
+Описание: Форматирует число, добавляя пробелы между тысячами.
+
+Возвращает отформатированное число. '''
+
     return "{:,.0f}".format(value).replace(",", " ")
 
 
@@ -40,12 +66,36 @@ templates.env.filters["format_number"] = format_number_filter
 # Маршрут для главной страницы
 @app.get("/")
 async def read_root(request: Request):
+    ''' Функция обработки GET-запроса к корневому URL.
+
+Аргументы:
+
+request: запрос пользователя
+Описание: Возвращает шаблон index.html с
+контекстом, содержащим запрос пользователя.
+
+Эта функция обрабатывает GET-запросы к корневому
+URL и возвращает шаблон index.html с контекстом,
+содержащим запрос пользователя. '''
+
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 # Маршрут для страницы обратной связи
 @app.get("/feedback")
 async def read_feedback(request: Request):
+    ''' Функция обработки GET-запроса к URL /feedback.
+
+Аргументы:
+
+request: запрос пользователя
+Описание: Возвращает шаблон feedback.html с
+контекстом, содержащим запрос пользователя.
+
+Эта функция обрабатывает GET-запросы к
+URL /feedback и возвращает шаблон feedback.html
+с контекстом, содержащим запрос пользователя. '''
+
     return templates.TemplateResponse("feedback.html", {"request": request})
 
 
@@ -59,9 +109,36 @@ async def submit_feedback(
     organization_name: str = Form(...),
     session=Depends(get_db_session)
 ):
+    ''' Функция обработки POST-запроса к URL /submit_feedback.
+
+Аргументы:
+
+request: запрос пользователя
+name: имя пользователя
+phone: номер телефона пользователя
+email: адрес электронной почты пользователя
+organization_name: название организации пользователя
+session: сессия базы данных
+Описание: Обрабатывает обратную связь от пользователя,
+сохраняет ее в базе данных и возвращает шаблон
+feedback_success.html с контекстом, содержащим запрос
+пользователя. Если при обработке обратной связи возникает
+ошибка, записывает информацию об ошибке в лог и
+возвращает шаблон error.html с сообщением об ошибке.
+
+Эта функция обрабатывает POST-запросы к
+URL /submit_feedback, сохраняет обратную связь от пользователя
+в базе данных и возвращает шаблон feedback_success.html
+с контекстом, содержащим запрос пользователя. Если при
+обработке обратной связи возникает ошибка, записывает
+информацию об ошибке в лог и возвращает шаблон error.html
+с сообщением об ошибке. '''
+
     try:
         # Логика обработки обратной связи
-        return templates.TemplateResponse("feedback_success.html", {"request": request})
+        return templates.TemplateResponse(
+            "feedback_success.html", {"request": request}
+            )
     except Exception as e:
         logging.error(f"Error during feedback submission: {e}")
         return templates.TemplateResponse(
